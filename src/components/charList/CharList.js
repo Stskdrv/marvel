@@ -1,6 +1,7 @@
 import './charList.scss';
 
 import { Component } from 'react';
+import ErrorMessage from '../errorMessage/ErrorMessage';
 import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 
@@ -31,17 +32,20 @@ class CharList extends Component {
 
 
     render() {
-        const {list, loading} = this.state;
+        const {list, loading, error} = this.state;
         console.log(this.state);
 
 
         return (
+            error ? <ErrorMessage/> :
             loading ? <Spinner/> : 
             <div className="char__list">
             <ul className="char__grid">
                 {list.map((el) => {
                     return (
-                        <li key={el.name} className="char__item">
+                        <li key={el.id} 
+                        className="char__item"
+                        onClick={() => this.props.onCharSelected(el.id)}>
                         <img src={el.thumbnail} alt="abyss"/>
                         <div className="char__name">{el.name}</div>
                     </li>
