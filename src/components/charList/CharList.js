@@ -4,6 +4,7 @@ import { Component } from 'react';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import MarvelService from '../../services/MarvelService';
 import PropTypes from 'prop-types';
+import React from 'react';
 import Spinner from '../spinner/Spinner';
 
 class CharList extends Component {
@@ -17,9 +18,26 @@ class CharList extends Component {
         showButton: true,
     }
 
+    myRef=[];
     
 
     marvelService = new MarvelService();
+
+    setCurrentRef = el => {
+        this.myRef.push(el);
+    }
+    
+
+    focusSelecteChar = (name) => {
+        console.log(this.myRef, name);
+        if(this.myRef) {
+            this.myRef.map((el => {
+                el.textContent === name ? 
+                el.classList.toggle('char__item_selected') : 
+                el.classList='char__item'
+            }));
+        }
+    }
 
     onLislLoading() {
         this.setState({loading: true})
@@ -49,7 +67,6 @@ class CharList extends Component {
 
     render() {
         const {list, loading, error, newItemsLoading, offset, showButton} = this.state;
-        console.log(this.state);
 
 
         return (
@@ -60,8 +77,13 @@ class CharList extends Component {
                 {list.map((el) => {
                     return (
                         <li key={el.id} 
-                        className="char__item"
-                        onClick={() => this.props.onCharSelected(el.id)}>
+                            ref={this.setCurrentRef}
+                            className="char__item"
+                            tabIndex={0}
+                            onClick={() => {
+                                this.props.onCharSelected(el.id);
+                                this.focusSelecteChar(el.name)}
+                        }>
                         <img src={el.thumbnail} alt="abyss"/>
                         <div className="char__name">{el.name}</div>
                     </li>
