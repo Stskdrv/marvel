@@ -35,6 +35,7 @@ class CharList extends Component {
                 el.textContent === name ? 
                 el.classList.toggle('char__item_selected') : 
                 el.classList='char__item'
+                return el;
             }));
         }
     }
