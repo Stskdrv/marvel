@@ -1,6 +1,10 @@
+import { Route, BrowserRouter as Router } from "react-router-dom";
+
+import AppBanner from "../appBanner/AppBanner";
 import AppHeader from "../appHeader/AppHeader";
 import CharInfo from "../charInfo/CharInfo";
 import CharList from "../charList/CharList";
+import ComicsList from "../comicsList/ComicsList";
 import RandomChar from "../randomChar/RandomChar";
 import decoration from '../../resources/img/vision.png';
 import { useState } from "react";
@@ -14,17 +18,21 @@ const App = () => {
     }
 
     return (
-        <div className="app">
-            <AppHeader/>
-            <main>
-                <RandomChar/>
-                <div className="char__content">
-                    <CharList onCharSelected={onCharSelected}/>
-                    <CharInfo charId={selectedChar}/>
-                </div>
-                <img className="bg-decoration" src={decoration} alt="vision"/>
-            </main>
-        </div>
+        <Router>
+            <div className="app">
+                <AppHeader/>
+                <main>
+                    {/* <RandomChar/>
+                    <div className="char__content">
+                        <CharList onCharSelected={onCharSelected}/>
+                        <CharInfo charId={selectedChar}/>
+                    </div>
+                    <img className="bg-decoration" src={decoration} alt="vision"/> */}
+                    <AppBanner/>
+                    <ComicsList/>
+                </main>
+            </div>
+        </Router>
     )
 }
 
