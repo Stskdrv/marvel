@@ -3,35 +3,29 @@ import './randomChar.scss';
 import { useEffect, useState } from 'react';
 
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
 import Spinner from '../spinner/Spinner';
 import mjolnir from '../../resources/img/mjolnir.png';
+import useMarvelService from '../../services/MarvelService';
 
 const RandomChar = () => {
     const [char, setChar] = useState({});
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [id, setId] = useState(Math.floor(Math.random() * (1011400 - 1011000) + 1011000));
 
     const updateChar = () => {
-        setId(Math.floor(Math.random() * (1011400 - 1011000) + 1011000))
-    }
-
-    const marvelService = new MarvelService();
-
-    useEffect(() => {
-        marvelService
-            .getCharacter(id)
-            .then(setLoading(true))
+        clearError();
+        setId(Math.floor(Math.random() * (1011400 - 1011000) + 1011000));
+        setChar({})
+        getCharacter(id)
             .then((res) => {
                 setChar(res);
-                setLoading(false);
-            })
-            .catch(() => {
-                setError(true);
-                setLoading(false);
-            })
-    }, [id])
+            });
+    }
+
+    const {loading,error,getCharacter, clearError} = useMarvelService();
+
+    useEffect(() => {
+        updateChar()
+    }, [])
 
         const errorMessage = error ? <ErrorMessage /> : null;
         const spinner = loading ? <Spinner/> : null;
@@ -60,18 +54,15 @@ const RandomChar = () => {
 }
 
 const View = ({char}) => {
-    const {name, description, thumbnail, homePage, wiki} = char;
-
-    const modifideDescr = description.length > 180 ? description.slice(0,180)+'...' : description;
-
-    const imageFit = thumbnail.includes('available') ? {objectFit: 'contain'} : null ;
+    const {name, description, thumbnail, homePage, wiki, style} = char;
+    
     return (
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" style={imageFit} className="randomchar__img"/>
+            <img src={thumbnail} alt="Random character" style={style} className="randomchar__img"/>
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">
-                    {modifideDescr}
+                    {description}
                 </p>
                 <div className="randomchar__btns">
                     <a href={homePage} className="button button__main">

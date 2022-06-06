@@ -1,37 +1,23 @@
+import { useHttp } from "../hooks/http.hook";
 
 const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
 const _apiKey = 'b28c450b5c7f85fd1345cacb884e7401';
 
 const _baseOffset = 210;
 
-class MarvelService {
-    getResource = async (url) => {
-        let res = await fetch(url);
+const  useMarvelService = () => {
 
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${url}, status: ${res.status}`)
-        }
+    const {loading, request, error, clearError} = useHttp();
 
-        return await res.json();
-    };
+    const _transformCharacter = (char) => {
+        const {description} = char;
+        const modDescr = description.length > 180 ? description.slice(0, 100) + '...' : description
 
-    getAllCharacters = async (offset = _baseOffset) => {
-        const res = await this.getResource(_apiBase + `characters?limit=9&offset=${offset}&apikey=`+_apiKey);
-        return res.data.results.map(this._transformCharacter);
-    };
-
-    getCharacter = async (id) => {
-        const res = await this.getResource(_apiBase + `characters/${id}?apikey=`+_apiKey);
-
-        return this._transformCharacter(res.data.results[0]);
-
-    };
-
-    _transformCharacter = (char) => {
         return {
             name: char.name,
-            description: char.description,
+            description: modDescr,
             thumbnail: `${char.thumbnail.path}.${char.thumbnail.extension}`,
+            style: char.thumbnail.path.includes('available') ? {objectFit: 'contain'} : null, 
             homePage: char.urls[0].url,
             wiki:  char.urls[1].url,
             id: char.id,
@@ -39,7 +25,22 @@ class MarvelService {
         }
     }
 
+    const getAllCharacters = async (offset = _baseOffset) => {
+        const res = await request(_apiBase + `characters?limit=9&offset=${offset}&apikey=`+_apiKey);
+        return res.data.results.map(_transformCharacter);
+    };
+
+    const getCharacter = async (id) => {
+        const res = await request(_apiBase + `characters/${id}?apikey=`+_apiKey);
+
+        return _transformCharacter(res.data.results[0]);
+
+    };
+    
+
+    
+    return {loading, error, getAllCharacters, getCharacter, clearError}
 
 };
 
-export default MarvelService;
+export default useMarvelService;

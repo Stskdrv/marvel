@@ -3,46 +3,36 @@ import './charList.scss';
 import { useEffect, useRef, useState } from 'react';
 
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Spinner from '../spinner/Spinner';
+import useMarvelService from '../../services/MarvelService';
 
 const CharList = ({onCharSelected}) => {
 
     const [list, setList] = useState([]);
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(false);
     const [newItemsLoading, setNewItemsLoading] = useState(false);
     const [offset, setOffset] = useState(219);
     const [showButton, setShowButton] = useState(true);
 
     const myRef= useRef([]);
     
-    const marvelService = new MarvelService();
-
-    const onListLoaded = (list) => {
-        setList(list);
-        setLoading(false);
-    }
+    const {loading,error,getAllCharacters} = useMarvelService();
 
     useEffect(() => {
-        onLislLoading()
-        marvelService.getAllCharacters()
-            .then(onListLoaded)
-            .catch(error => setError(error));
+        onRequest(210, true);
     }, [])
 
-    const onRequest = (offset) => {
-        setNewItemsLoading(true);
-        marvelService
-            .getAllCharacters(offset)
+    const onRequest = (offset, initial) => {
+        initial ? setNewItemsLoading(false) : setNewItemsLoading(true);
+            getAllCharacters(offset)
             .then((list) => {
                 setList((newlist) => ([...newlist, ...list ]));
                 setNewItemsLoading(false);
                  setOffset(offset + 9);
+                 console.log(list.length);
+                 if(list.length < 8) {setShowButton(false)}
             });
-            if(list.length < 9) {setShowButton(false)}
         };
     
 
@@ -57,13 +47,9 @@ const CharList = ({onCharSelected}) => {
         }
     }
 
-    const onLislLoading = () => {
-        setLoading(true)
-    }
-
     return (
         error ? <ErrorMessage/> :
-        loading ? <Spinner/> : 
+        (loading && !newItemsLoading)  ? <Spinner/> : 
         <div className="char__list">
         <ul className="char__grid">
             {list.map((el, i) => {
@@ -83,7 +69,7 @@ const CharList = ({onCharSelected}) => {
             })}
         </ul>
         {newItemsLoading ? <Spinner /> : null}
-        <button disabled={newItemsLoading} style={!showButton ? {display: 'none'} : null} onClick={() => onRequest(offset)} className="button button__main button__long">
+        <button disabled={newItemsLoading} style={!showButton ? {display: 'none'} : null} onClick={() => onRequest(offset,false)} className="button button__main button__long">
             <div className="inner">load more</div>
         </button>
     </div>            
