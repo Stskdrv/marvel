@@ -1,18 +1,23 @@
 import './appHeader.scss';
 
+import {Link, NavLink} from 'react-router-dom';
+
 const AppHeader = () => {
+    let activeStyle = {
+        textDecoration: "underline",
+      };
     return (
         <header className="app__header">
             <h1 className="app__title">
-                <a href="#">
+                <Link to='/'>
                     <span>Marvel</span> information portal
-                </a>
+                </Link>
             </h1>
             <nav className="app__menu">
                 <ul>
-                    <li><a href="#">Characters</a></li>
+                    <li><NavLink end style={({isActive}) => isActive ? activeStyle : null} to='/'>Characters</NavLink></li>
                     /
-                    <li><a href="#">Comics</a></li>
+                    <li><NavLink style={({isActive}) => isActive ? activeStyle : null} to='/comics'>Comics</NavLink></li>
                 </ul>
             </nav>
         </header>

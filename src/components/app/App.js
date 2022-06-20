@@ -1,35 +1,30 @@
-import { Route, BrowserRouter as Router } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { lazy } from "react";
 
-import AppBanner from "../appBanner/AppBanner";
 import AppHeader from "../appHeader/AppHeader";
-import CharInfo from "../charInfo/CharInfo";
-import CharList from "../charList/CharList";
-import ComicsList from "../comicsList/ComicsList";
-import RandomChar from "../randomChar/RandomChar";
-import decoration from '../../resources/img/vision.png';
-import { useState } from "react";
+import ComicsPage from "../pages/ComicsPae";
+import MainPage from "../pages/MainPage";
+import SingleComicPage from "../pages/SingleComicPage/SingleComicPage";
+import { Suspense } from "react";
+import Spinner from "../spinner/Spinner";
+const Page404 = lazy(() => import("../pages/404"));
 
 const App = () => {
-
-    const [selectedChar, setSelectedChar] = useState(null);
-
-    const onCharSelected = (id) => {
-        setSelectedChar(id);
-    }
 
     return (
         <Router>
             <div className="app">
                 <AppHeader/>
                 <main>
-                    {/* <RandomChar/>
-                    <div className="char__content">
-                        <CharList onCharSelected={onCharSelected}/>
-                        <CharInfo charId={selectedChar}/>
-                    </div>
-                    <img className="bg-decoration" src={decoration} alt="vision"/> */}
-                    <AppBanner/>
-                    <ComicsList/>
+                    <Suspense fallback={<Spinner/>}>
+                        <Routes>
+                            <Route exact path='/' element={<MainPage/>}/>
+                            <Route exact path='/comics' element={<ComicsPage/>}/>
+                            <Route exact path='/comics/:id' element={<SingleComicPage/>}/>
+                            <Route path='*' element={<Page404/>}/>
+                        </Routes>
+                    </Suspense>
+ 
                 </main>
             </div>
         </Router>

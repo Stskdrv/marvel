@@ -7,6 +7,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Spinner from '../spinner/Spinner';
 import useMarvelService from '../../services/MarvelService';
+import {
+    CSSTransition,
+    TransitionGroup,
+  } from 'react-transition-group';
 
 const CharList = ({onCharSelected}) => {
 
@@ -37,7 +41,6 @@ const CharList = ({onCharSelected}) => {
     
 
     const focusSelecteChar = (name) => {
-        console.log(myRef);
         if(myRef) {
             myRef.current.map(((el) => {
                 el.textContent === name ? 
@@ -52,21 +55,25 @@ const CharList = ({onCharSelected}) => {
         (loading && !newItemsLoading)  ? <Spinner/> : 
         <div className="char__list">
         <ul className="char__grid">
-            {list.map((el, i) => {
-                return (
-                    <li key={el.id} 
-                        ref={item => myRef.current[i] = item }
-                        className="char__item"
-                        tabIndex={0}
-                        onClick={() => {
-                            onCharSelected(el.id);
-                            focusSelecteChar(el.name)}
-                    }>
-                    <img src={el.thumbnail} alt="abyss"/>
-                    <div className="char__name">{el.name}</div>
-                </li>
-                )
-            })}
+            <TransitionGroup component={null}>
+                {list.map((el, i) => {
+                    return (
+                        <CSSTransition classNames="char__item" key={el.id} timeout={500}>
+                            <li  
+                                ref={item => myRef.current[i] = item }
+                                className="char__item"
+                                tabIndex={0}
+                                onClick={() => {
+                                    onCharSelected(el.id);
+                                    focusSelecteChar(el.name)}
+                            }>
+                                <img src={el.thumbnail} alt="abyss"/>
+                                <div className="char__name">{el.name}</div>
+                            </li>
+                        </CSSTransition>                   
+                    )
+                })}
+            </TransitionGroup>
         </ul>
         {newItemsLoading ? <Spinner /> : null}
         <button disabled={newItemsLoading} style={!showButton ? {display: 'none'} : null} onClick={() => onRequest(offset,false)} className="button button__main button__long">
