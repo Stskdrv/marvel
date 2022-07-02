@@ -4,7 +4,7 @@ import { lazy } from "react";
 import AppHeader from "../appHeader/AppHeader";
 import ComicsPage from "../pages/ComicsPae";
 import MainPage from "../pages/MainPage";
-import SingleComicPage from "../pages/SingleComicPage/SingleComicPage";
+import SinglePage from "../pages/SinglePage/SinglePage";
 import { Suspense } from "react";
 import Spinner from "../spinner/Spinner";
 const Page404 = lazy(() => import("../pages/404"));
@@ -20,7 +20,8 @@ const App = () => {
                         <Routes>
                             <Route exact path='/' element={<MainPage/>}/>
                             <Route exact path='/comics' element={<ComicsPage/>}/>
-                            <Route exact path='/comics/:id' element={<SingleComicPage/>}/>
+                            <Route exact path='/comics/:id/comic' element={<SinglePage type={'comic'}/>}/>
+                            <Route exact path='/:name/char' element={<SinglePage type={'char'}/>}/>
                             <Route path='*' element={<Page404/>}/>
                         </Routes>
                     </Suspense>

@@ -10,12 +10,10 @@ const  useMarvelService = () => {
     const {loading, request, error, clearError} = useHttp();
 
     const _transformCharacter = (char) => {
-        const {description} = char;
-        const modDescr = description.length > 180 ? description.slice(0, 100) + '...' : description
 
         return {
             name: char.name,
-            description: modDescr,
+            description: char.description.length > 180 ? char.description.slice(0, 100) + '...' : char.description,
             thumbnail: `${char.thumbnail.path}.${char.thumbnail.extension}`,
             style: char.thumbnail.path.includes('available') ? {objectFit: 'contain'} : null, 
             homePage: char.urls[0].url,
@@ -49,6 +47,16 @@ const  useMarvelService = () => {
 
     };
 
+    const getCharacterByName = async (name) => {
+        const res = await request(_apiBase + `characters?name=${name}&apikey=`+_apiKey);
+        if(res.data.results.length) {
+            return _transformCharacter(res.data.results[0]);
+        }
+
+        return {message: 'The character was not found. Please check the name and try again!'}
+
+    };
+
     const getAllComics = async (offset = 0) => {
         const res = await request(_apiBase+`comics?orderBy=issueNumber&limit=8&offset=${offset}&apikey=`+_apiKey);
         return res.data.results.map(_transformComics);
@@ -58,11 +66,8 @@ const  useMarvelService = () => {
         const res = await request(_apiBase+`comics/${id}?&apikey=`+_apiKey);
         return _transformComics(res.data.results[0]);
     }
-
     
-
-    
-    return {loading, error, getAllCharacters, getCharacter, clearError, getAllComics, getComics}
+    return {loading, error, getAllCharacters, getCharacter, getCharacterByName, clearError, getAllComics, getComics}
 
 };
 
