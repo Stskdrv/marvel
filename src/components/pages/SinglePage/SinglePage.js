@@ -2,6 +2,7 @@ import './singlePage.scss';
 
 import { Link, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet';
 
 import ErrorMessage from '../../errorMessage/ErrorMessage';
 import Spinner from '../../spinner/Spinner';
@@ -38,6 +39,12 @@ const SinglePage = ({type}) => {
     return (
         loading ? <Spinner/> : error ? <ErrorMessage/> : 
         <div className="single-comic">
+            <Helmet>
+                <meta 
+                    name="description"
+                    content={`Page with single ${type}`}/>
+                <title>{`This is ${content.name || content.title} page`}</title>
+            </Helmet> 
             <img src={content.thumbnail} alt="img" className="single-comic__img"/>
             <div className="single-comic__info">
                 <h2 className="single-comic__name">{content.name}</h2>

@@ -2,7 +2,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { lazy } from "react";
 
 import AppHeader from "../appHeader/AppHeader";
-import ComicsPage from "../pages/ComicsPae";
+import ComicsPage from "../pages/ComicsPage";
 import MainPage from "../pages/MainPage";
 import SinglePage from "../pages/SinglePage/SinglePage";
 import { Suspense } from "react";
